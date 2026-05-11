@@ -1,0 +1,45 @@
+# MRI Extractor Field Configuration
+
+fields:
+  sequence_type:
+    patterns:
+      - '(?i)sequence[:\s]+([^\n]+)'
+      - '(?i)protocol[:\s]+([^\n]+)'
+    type: string
+    redcap_var: mri_sequence
+
+  region:
+    patterns:
+      - '(?i)region[:\s]+([^\n]+)'
+      - '(?i)anatomical\s*region[:\s]+([^\n]+)'
+    type: string
+    redcap_var: mri_region
+
+  report_date:
+    patterns:
+      - '(?i)date[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})'
+      - '(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})'
+    type: date
+    redcap_var: mri_date
+
+checkboxes:
+  normal:
+    keyword_patterns:
+      - '(?i)no\s+significant\s+(abnormality|finding)'
+      - '(?i)normal\s+MRI'
+      - '(?i)unremarkable'
+    redcap_var: mri_normal
+
+  signal_abnormality:
+    keyword_patterns:
+      - '(?i)signal\s+abnormality'
+      - '(?i)abnormal\s+signal'
+      - '(?i)hyperintensity'
+      - '(?i)hypointensity'
+    redcap_var: mri_signal_abnormality
+
+  follow_up_recommended:
+    keyword_patterns:
+      - '(?i)follow.up\s+recommended'
+      - '(?i)further\s+imaging'
+    redcap_var: mri_followup

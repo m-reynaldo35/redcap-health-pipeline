@@ -1,0 +1,95 @@
+# Echocardiogram Extractor Field Configuration
+
+fields:
+  ef:
+    patterns:
+      - '(?i)ejection\s*fraction[:\s]+(\d+)'
+      - '(?i)\bEF[:\s]+(\d+)\s*%'
+      - '(?i)LVEF[:\s]+(\d+)\s*%'
+    type: integer
+    unit: percent
+    redcap_var: echo_ef
+
+  lv_edd:
+    patterns:
+      - '(?i)LV\s*EDD[:\s]+([\d\.]+)'
+      - '(?i)end.diastolic\s*diameter[:\s]+([\d\.]+)'
+      - '(?i)LVEDD[:\s]+([\d\.]+)'
+    type: float
+    unit: mm
+    redcap_var: echo_lv_edd
+
+  lv_esd:
+    patterns:
+      - '(?i)LV\s*ESD[:\s]+([\d\.]+)'
+      - '(?i)end.systolic\s*diameter[:\s]+([\d\.]+)'
+      - '(?i)LVESD[:\s]+([\d\.]+)'
+    type: float
+    unit: mm
+    redcap_var: echo_lv_esd
+
+  ivs_thickness:
+    patterns:
+      - '(?i)IVS[:\s]+([\d\.]+)\s*mm'
+      - '(?i)interventricular\s*septum[:\s]+([\d\.]+)'
+    type: float
+    unit: mm
+    redcap_var: echo_ivs
+
+  pw_thickness:
+    patterns:
+      - '(?i)posterior\s*wall[:\s]+([\d\.]+)'
+      - '(?i)PW\s*thickness[:\s]+([\d\.]+)'
+    type: float
+    unit: mm
+    redcap_var: echo_pw
+
+  pasp:
+    patterns:
+      - '(?i)PASP[:\s]+([\d\.]+)\s*mmHg'
+      - '(?i)pulmonary\s*artery\s*systolic[:\s]+([\d\.]+)'
+      - '(?i)estimated\s*RVSP[:\s]+([\d\.]+)'
+    type: float
+    unit: mmHg
+    redcap_var: echo_pasp
+
+  report_date:
+    patterns:
+      - '(?i)date[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})'
+      - '(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})'
+    type: date
+    redcap_var: echo_date
+
+checkboxes:
+  normal_echo:
+    keyword_patterns:
+      - '(?i)normal\s+echo'
+      - '(?i)structurally\s+normal'
+      - '(?i)no\s+significant\s+abnormality'
+    redcap_var: echo_normal
+
+  lv_dysfunction:
+    keyword_patterns:
+      - '(?i)LV\s+dysfunction'
+      - '(?i)left\s+ventricular\s+dysfunction'
+      - '(?i)reduced\s+EF'
+      - '(?i)impaired\s+systolic'
+    redcap_var: echo_lv_dysfunction
+
+  rv_dysfunction:
+    keyword_patterns:
+      - '(?i)RV\s+dysfunction'
+      - '(?i)right\s+ventricular\s+dysfunction'
+    redcap_var: echo_rv_dysfunction
+
+  aortic_stenosis:
+    keyword_patterns:
+      - '(?i)aortic\s+stenosis'
+      - '(?i)\bAS\b'
+    redcap_var: echo_as
+
+  mitral_regurgitation:
+    keyword_patterns:
+      - '(?i)mitral\s+regurgitation'
+      - '(?i)\bMR\b'
+    redcap_var: echo_mr

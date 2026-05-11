@@ -1,0 +1,147 @@
+# ECG Extractor Field Configuration
+# Each field defines one or more regex patterns to try against the full PDF text.
+# Patterns are tried in order — first match wins.
+# type: integer | float | date | string | checkbox
+# checkbox fields: extracted value is "1" (present/positive) or "0" (absent)
+
+fields:
+  heart_rate:
+    patterns:
+      - '(?i)heart\s*rate[:\s]+(\d+)'
+      - '(?i)\bHR[:\s]+(\d+)'
+      - '(?i)ventricular rate[:\s]+(\d+)'
+    type: integer
+    unit: bpm
+    redcap_var: ecg_hr
+
+  pr_interval:
+    patterns:
+      - '(?i)PR\s*interval[:\s]+(\d+)'
+      - '(?i)\bPR[:\s]+(\d+)\s*ms'
+      - '(?i)P-R\s*interval[:\s]+(\d+)'
+    type: integer
+    unit: ms
+    redcap_var: ecg_pr
+
+  qrs_duration:
+    patterns:
+      - '(?i)QRS\s*duration[:\s]+(\d+)'
+      - '(?i)QRS[:\s]+(\d+)\s*ms'
+      - '(?i)QRS\s*width[:\s]+(\d+)'
+    type: integer
+    unit: ms
+    redcap_var: ecg_qrs
+
+  qt_interval:
+    patterns:
+      - '(?i)QT[:\s]+(\d+)\s*ms'
+      - '(?i)QT\s*interval[:\s]+(\d+)'
+    type: integer
+    unit: ms
+    redcap_var: ecg_qt
+
+  qtc_interval:
+    patterns:
+      - '(?i)QTc[:\s]+(\d+)\s*ms'
+      - '(?i)corrected QT[:\s]+(\d+)'
+      - '(?i)QTcB[:\s]+(\d+)'
+      - '(?i)QTcF[:\s]+(\d+)'
+    type: integer
+    unit: ms
+    redcap_var: ecg_qtc
+
+  p_axis:
+    patterns:
+      - '(?i)P\s*axis[:\s]+([-]?\d+)'
+      - '(?i)P-axis[:\s]+([-]?\d+)'
+    type: integer
+    unit: degrees
+    redcap_var: ecg_p_axis
+
+  qrs_axis:
+    patterns:
+      - '(?i)QRS\s*axis[:\s]+([-]?\d+)'
+      - '(?i)mean\s*QRS[:\s]+([-]?\d+)'
+    type: integer
+    unit: degrees
+    redcap_var: ecg_qrs_axis
+
+  t_axis:
+    patterns:
+      - '(?i)T\s*axis[:\s]+([-]?\d+)'
+      - '(?i)T-axis[:\s]+([-]?\d+)'
+    type: integer
+    unit: degrees
+    redcap_var: ecg_t_axis
+
+  report_date:
+    patterns:
+      - '(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})'
+      - '(\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2})'
+      - '(?i)date[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})'
+    type: date
+    redcap_var: ecg_date
+
+  rhythm:
+    patterns:
+      - '(?i)rhythm[:\s]+([^\n]+)'
+      - '(?i)cardiac rhythm[:\s]+([^\n]+)'
+    type: string
+    redcap_var: ecg_rhythm
+
+# --- Checkbox fields ---
+# These match keyword presence in the report text.
+# Value is "1" if any keyword_patterns matches, "0" otherwise.
+
+checkboxes:
+  normal_ecg:
+    keyword_patterns:
+      - '(?i)normal\s+ECG'
+      - '(?i)within normal limits'
+      - '(?i)no significant abnormality'
+    redcap_var: ecg_normal
+
+  atrial_fibrillation:
+    keyword_patterns:
+      - '(?i)atrial\s+fibrillation'
+      - '(?i)\bAF\b'
+      - '(?i)a\.fib'
+    redcap_var: ecg_af
+
+  lbbb:
+    keyword_patterns:
+      - '(?i)left\s+bundle\s+branch\s+block'
+      - '(?i)\bLBBB\b'
+    redcap_var: ecg_lbbb
+
+  rbbb:
+    keyword_patterns:
+      - '(?i)right\s+bundle\s+branch\s+block'
+      - '(?i)\bRBBB\b'
+    redcap_var: ecg_rbbb
+
+  st_elevation:
+    keyword_patterns:
+      - '(?i)ST\s+elevation'
+      - '(?i)ST-elevation'
+      - '(?i)\bSTEMI\b'
+    redcap_var: ecg_st_elevation
+
+  st_depression:
+    keyword_patterns:
+      - '(?i)ST\s+depression'
+      - '(?i)ST-depression'
+    redcap_var: ecg_st_depression
+
+  lvh:
+    keyword_patterns:
+      - '(?i)left\s+ventricular\s+hypertrophy'
+      - '(?i)\bLVH\b'
+    redcap_var: ecg_lvh
+
+  first_degree_av_block:
+    keyword_patterns:
+      - '(?i)first\s+degree\s+(heart\s+)?block'
+      - '(?i)1st\s+degree\s+AV\s+block'
+      - '(?i)prolonged\s+PR'
+    redcap_var: ecg_av_block_1

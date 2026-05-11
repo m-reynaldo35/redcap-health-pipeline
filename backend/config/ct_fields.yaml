@@ -1,0 +1,46 @@
+# CT Extractor Field Configuration
+
+fields:
+  scan_type:
+    patterns:
+      - '(?i)scan\s*type[:\s]+([^\n]+)'
+      - '(?i)examination[:\s]+([^\n]+)'
+      - '(?i)procedure[:\s]+([^\n]+)'
+    type: string
+    redcap_var: ct_scan_type
+
+  report_date:
+    patterns:
+      - '(?i)date[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})'
+      - '(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})'
+    type: date
+    redcap_var: ct_date
+
+  calcium_score:
+    patterns:
+      - '(?i)Agatston\s*score[:\s]+([\d\.]+)'
+      - '(?i)calcium\s*score[:\s]+([\d\.]+)'
+      - '(?i)CAC\s*score[:\s]+([\d\.]+)'
+    type: float
+    redcap_var: ct_calcium_score
+
+checkboxes:
+  normal:
+    keyword_patterns:
+      - '(?i)no\s+significant\s+finding'
+      - '(?i)unremarkable'
+      - '(?i)normal\s+study'
+    redcap_var: ct_normal
+
+  follow_up_recommended:
+    keyword_patterns:
+      - '(?i)follow.up\s+recommended'
+      - '(?i)further\s+investigation'
+      - '(?i)clinical\s+correlation'
+    redcap_var: ct_followup
+
+  incidental_finding:
+    keyword_patterns:
+      - '(?i)incidental\s+finding'
+      - '(?i)incidentally\s+noted'
+    redcap_var: ct_incidental

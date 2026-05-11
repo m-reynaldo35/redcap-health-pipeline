@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Environment files
+.env
+.env.local
+*.env
+
+# Node
+node_modules/
+.next/
+frontend/.next/
+
+# OS
+.DS_Store
+
+# Sample data (never commit patient data)
+sample_pdfs/*.pdf
