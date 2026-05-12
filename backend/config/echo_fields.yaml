@@ -1,23 +1,230 @@
 # Echocardiogram Extractor Field Configuration
+# Tuned against St. James's Hospital TTE reports (pdfplumber layout verified 2026-05-12)
 
 fields:
+
+  # ── Patient vitals ───────────────────────────────────────────────────────────
+  hr:
+    patterns:
+      - '(?i)HR[:\s]+(\d+)\s*bpm'
+    type: integer
+    unit: bpm
+    redcap_var: echo_hr
+
+  height:
+    patterns:
+      - '(?i)Height[:\s]+(\d+)\s*cm'
+    type: integer
+    unit: cm
+    redcap_var: echo_height
+
+  weight:
+    patterns:
+      - '(?i)Weight[:\s]+(\d+)\s*kg'
+    type: integer
+    unit: kg
+    redcap_var: echo_weight
+
+  bsa:
+    patterns:
+      - '(?i)BSA[:\s]+([\d\.]+)\s*m'
+    type: float
+    unit: m²
+    redcap_var: echo_bsa
+
+  bmi:
+    patterns:
+      - '(?i)BMI[:\s]+([\d\.]+)'
+    type: float
+    unit: kg/m²
+    redcap_var: echo_bmi
+
+  # ── Ejection fraction ────────────────────────────────────────────────────────
   ef:
     patterns:
-      - '(?i)ejection\s*fraction[:\s]+(\d+)'
+      - '(?i)ejection\s*fraction[^\d]{0,40}(\d+)\s*%?'
       - '(?i)\bEF[:\s]+(\d+)\s*%'
       - '(?i)LVEF[:\s]+(\d+)\s*%'
     type: integer
     unit: percent
     redcap_var: echo_ef
 
+  # ── Aortic valve ─────────────────────────────────────────────────────────────
+  av_peak_velocity:
+    patterns:
+      - '(?i)Peak\s*Velocity[:\s]+([\d\.]+)'
+    type: float
+    unit: m/s
+    redcap_var: echo_av_peak_vel
+
+  av_mean_velocity:
+    patterns:
+      - '(?i)Mean\s*Velocity[:\s]+([\d\.]+)'
+    type: float
+    unit: m/s
+    redcap_var: echo_av_mean_vel
+
+  av_vti:
+    patterns:
+      - '(?i)AV\s*VTI[:\s]+([\d\.]+)'
+    type: float
+    unit: cm
+    redcap_var: echo_av_vti
+
+  av_peak_gradient:
+    patterns:
+      - '(?i)Peak\s*Gradient[:\s]+([\d\.]+)'
+    type: float
+    unit: mmHg
+    redcap_var: echo_av_peak_grad
+
+  av_mean_gradient:
+    patterns:
+      - '(?i)Mean\s*Gradient[:\s]+([\d\.]+)'
+    type: float
+    unit: mmHg
+    redcap_var: echo_av_mean_grad
+
+  av_dimensionless_index:
+    patterns:
+      - '(?i)Dimensionless\s*Index[:\s]+([\d\.]+)'
+    type: float
+    redcap_var: echo_av_di
+
+  # ── LVOT ─────────────────────────────────────────────────────────────────────
+  # Patterns anchored to "LVOT\n" to avoid collision with AV mean velocity/gradient
+  lvot_mean_velocity:
+    patterns:
+      - '(?i)LVOT\s*\nMean\s*Velocity[:\s]+([\d\.]+)'
+    type: float
+    unit: m/s
+    redcap_var: echo_lvot_mean_vel
+
+  lvot_mean_gradient:
+    patterns:
+      - '(?i)LVOT\s*\nMean\s*Velocity[^\n]*Mean\s*Gradient[:\s]+([\d\.]+)'
+    type: float
+    unit: mmHg
+    redcap_var: echo_lvot_mean_grad
+
+  lvot_vti:
+    patterns:
+      - '(?i)LVOT\s*VTI[:\s]+([\d\.]+)'
+    type: float
+    unit: cm
+    redcap_var: echo_lvot_vti
+
+  # ── Aorta ────────────────────────────────────────────────────────────────────
+  sinus_of_valsalva:
+    patterns:
+      - '(?i)Sinus\s*of\s*Valsalva[:\s]+([\d\.]+)'
+    type: float
+    unit: cm
+    redcap_var: echo_aorta_sov
+
+  ascending_aorta:
+    patterns:
+      - '(?i)Ascending\s*Aorta[:\s]+([\d\.]+)'
+    type: float
+    unit: cm
+    redcap_var: echo_aorta_asc
+
+  # ── Mitral valve ─────────────────────────────────────────────────────────────
+  mv_e_wave:
+    patterns:
+      - '(?i)Peak\s*E-?Wave[:\s]+([\d\.]+)'
+    type: float
+    unit: m/s
+    redcap_var: echo_mv_e_wave
+
+  mv_a_wave:
+    patterns:
+      - '(?i)Peak\s*A-?Wave[:\s]+([\d\.]+)'
+    type: float
+    unit: m/s
+    redcap_var: echo_mv_a_wave
+
+  mv_ea_ratio:
+    patterns:
+      - '(?i)E\/A\s*Ratio[:\s]+([\d\.]+)'
+    type: float
+    redcap_var: echo_mv_ea_ratio
+
+  mv_peak_gradient:
+    # Anchored after E/A Ratio line to avoid matching the AV peak gradient
+    patterns:
+      - '(?i)E\/A\s*Ratio[:\s]+[\d\.]+\nPeak\s*Gradient[:\s]+([\d\.]+)'
+    type: float
+    unit: mmHg
+    redcap_var: echo_mv_peak_grad
+
+  # ── Left atrium ──────────────────────────────────────────────────────────────
+  la_diameter:
+    patterns:
+      - '(?i)LA\s*Diameter[:\s]+([\d\.]+)'
+    type: float
+    unit: cm
+    redcap_var: echo_la_diameter
+
+  la_length:
+    patterns:
+      - '(?i)LA\s*Length[:\s]+([\d\.]+)'
+    type: float
+    unit: cm
+    redcap_var: echo_la_length
+
+  la_volume:
+    patterns:
+      - '(?i)LA\s*Volume[:\s]+([\d\.]+)'
+    type: float
+    unit: ml
+    redcap_var: echo_la_volume
+
+  la_volume_index:
+    patterns:
+      - '(?i)LA\s*Volume\s*Index[:\s]+([\d\.]+)'
+    type: float
+    unit: ml/m²
+    redcap_var: echo_la_vol_idx
+
+  la_dimension_index:
+    patterns:
+      - '(?i)LA\s*Dimension\s*Index[\s:]+([\d\.]+)'
+    type: float
+    unit: cm/m²
+    redcap_var: echo_la_dim_idx
+
+  la_area_2ch:
+    patterns:
+      - '(?i)LA\s*Area\s*2ch[:\s]+([\d\.]+)'
+    type: float
+    unit: cm²
+    redcap_var: echo_la_area_2ch
+
+  la_area_4ch:
+    patterns:
+      - '(?i)LA\s*Area\s*4ch[:\s]+([\d\.]+)'
+    type: float
+    unit: cm²
+    redcap_var: echo_la_area_4ch
+
+  # ── Left ventricle ───────────────────────────────────────────────────────────
   lv_edd:
     patterns:
+      - '(?i)LVIDD[:\s]+([\d\.]+)'
       - '(?i)LV\s*EDD[:\s]+([\d\.]+)'
       - '(?i)end.diastolic\s*diameter[:\s]+([\d\.]+)'
       - '(?i)LVEDD[:\s]+([\d\.]+)'
     type: float
-    unit: mm
+    unit: cm
     redcap_var: echo_lv_edd
+
+  lvidd_index:
+    patterns:
+      - '(?i)LVIDD\s*Index[:\s]+([\d\.]+)'
+    type: float
+    unit: cm/m²
+    redcap_var: echo_lvidd_idx
 
   lv_esd:
     patterns:
@@ -30,20 +237,87 @@ fields:
 
   ivs_thickness:
     patterns:
-      - '(?i)IVS[:\s]+([\d\.]+)\s*mm'
+      - '(?i)Septum\s*Diastolic[:\s]+([\d\.]+)'
+      - '(?i)IVS[:\s]+([\d\.]+)'
       - '(?i)interventricular\s*septum[:\s]+([\d\.]+)'
     type: float
-    unit: mm
+    unit: cm
     redcap_var: echo_ivs
 
   pw_thickness:
     patterns:
+      - '(?i)Post\s*Wall\s*Diast[:\s]+([\d\.]+)'
       - '(?i)posterior\s*wall[:\s]+([\d\.]+)'
       - '(?i)PW\s*thickness[:\s]+([\d\.]+)'
     type: float
-    unit: mm
+    unit: cm
     redcap_var: echo_pw
 
+  # ── LV diastolic function ────────────────────────────────────────────────────
+  e_prime_septal:
+    patterns:
+      - 'E''\s*Septal\s*Velocity[:\s]+([\d\.]+)'
+    type: float
+    unit: m/s
+    redcap_var: echo_e_prime_sept
+
+  ee_prime_septal:
+    patterns:
+      - 'E/E''\s*Septal[:\s]+([\d\.]+)'
+    type: float
+    redcap_var: echo_ee_prime_sept
+
+  e_prime_lateral:
+    patterns:
+      - 'E''\s*Lateral\s*Velocity[:\s]+([\d\.]+)'
+    type: float
+    unit: m/s
+    redcap_var: echo_e_prime_lat
+
+  ee_prime_lateral:
+    patterns:
+      - 'E/E''\s*Lateral[:\s]+([\d\.]+)'
+    type: float
+    redcap_var: echo_ee_prime_lat
+
+  ee_prime_average:
+    patterns:
+      - 'E/E''\s*Average[:\s]+([\d\.]+)'
+      - 'E/E''\s+(\d+(?:\.\d+)?)'
+    type: float
+    redcap_var: echo_ee_prime_avg
+
+  # ── Right atrium ─────────────────────────────────────────────────────────────
+  ra_area:
+    patterns:
+      - '(?i)RA\s*Area\s*\(A4C\)[:\s]+([\d\.]+)'
+    type: float
+    unit: cm²
+    redcap_var: echo_ra_area
+
+  ra_area_index:
+    patterns:
+      - '(?i)RA\s*Area\s*\(A4C\)\s*Index[:\s]+([\d\.]+)'
+    type: float
+    unit: cm²/m²
+    redcap_var: echo_ra_area_idx
+
+  # ── Right ventricle ──────────────────────────────────────────────────────────
+  rv_basal_diameter:
+    patterns:
+      - '(?i)Basal\s*RV\s*diam[^:]+:\s*([\d\.]+)'
+    type: float
+    unit: cm
+    redcap_var: echo_rv_basal_diam
+
+  tapse:
+    patterns:
+      - '(?i)TAPSE[:\s]+([\d\.]+)'
+    type: float
+    unit: cm
+    redcap_var: echo_tapse
+
+  # ── PASP ─────────────────────────────────────────────────────────────────────
   pasp:
     patterns:
       - '(?i)PASP[:\s]+([\d\.]+)\s*mmHg'
@@ -53,8 +327,10 @@ fields:
     unit: mmHg
     redcap_var: echo_pasp
 
+  # ── Report date ──────────────────────────────────────────────────────────────
   report_date:
     patterns:
+      - '(?i)Date\s*of\s*Study[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})'
       - '(?i)date[:\s]+(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})'
       - '(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})'
     type: date
@@ -85,11 +361,39 @@ checkboxes:
   aortic_stenosis:
     keyword_patterns:
       - '(?i)aortic\s+stenosis'
-      - '(?i)\bAS\b'
     redcap_var: echo_as
+
+  aortic_regurgitation:
+    keyword_patterns:
+      - '(?i)aortic\s+regurgitation'
+    redcap_var: echo_ar
 
   mitral_regurgitation:
     keyword_patterns:
       - '(?i)mitral\s+regurgitation'
-      - '(?i)\bMR\b'
     redcap_var: echo_mr
+
+  lv_hypertrophy:
+    keyword_patterns:
+      - '(?i)(?:LVH|left\s+ventricular\s+hypertrophy|septal\s+hypertrophy|asymmetric(?:al)?\s+septal)'
+    redcap_var: echo_lvh
+
+  dilated_la:
+    keyword_patterns:
+      - '(?i)dilated\s+left\s+atrium'
+      - '(?i)LA\s+(?:is\s+)?dilated'
+    redcap_var: echo_dilated_la
+
+  diastolic_dysfunction:
+    keyword_patterns:
+      - '(?i)raised\s+filling\s+pressures'
+      - '(?i)diastolic\s+dysfunction'
+      - '(?i)impaired\s+relaxation'
+    redcap_var: echo_diastolic_dysfunction
+
+  suboptimal_study:
+    keyword_patterns:
+      - '(?i)suboptimal'
+      - '(?i)technically\s+difficult'
+      - '(?i)limited\s+visualization'
+    redcap_var: echo_suboptimal
