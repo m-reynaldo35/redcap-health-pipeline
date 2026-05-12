@@ -6,7 +6,7 @@ export default function Home() {
   const router = useRouter();
   useEffect(() => {
     const token = localStorage.getItem("pipeline_token");
-    router.replace(token ? "/upload" : "/login");
+    router.replace(token ? "/records" : "/login");
   }, [router]);
   return null;
 }

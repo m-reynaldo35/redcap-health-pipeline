@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from auth import router as auth_router
-from routers import upload, review, redcap, records, stats, settings_router, inspector
+from routers import upload, review, redcap, records, stats, settings_router, inspector, export
 
 load_dotenv()
 
@@ -28,6 +28,7 @@ app.include_router(records.router, prefix="/api", tags=["records"])
 app.include_router(stats.router, prefix="/api", tags=["stats"])
 app.include_router(settings_router.router, prefix="/api", tags=["settings"])
 app.include_router(inspector.router, prefix="/api", tags=["inspector"])
+app.include_router(export.router, prefix="/api", tags=["export"])
 
 
 @app.get("/health")

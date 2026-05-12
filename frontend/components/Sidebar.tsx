@@ -1,22 +1,10 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Activity,
-  Upload,
-  ClipboardList,
-  Send,
-  Database,
-  BarChart2,
-  Settings,
-  LogOut,
-} from "lucide-react";
+import { Activity, FolderOpen, BarChart2, Settings, LogOut } from "lucide-react";
 
 const navItems = [
-  { href: "/upload", label: "Upload", icon: Upload },
-  { href: "/review", label: "Review", icon: ClipboardList },
-  { href: "/import", label: "REDCap Import", icon: Send },
-  { href: "/records", label: "Records", icon: Database },
+  { href: "/records", label: "Records", icon: FolderOpen },
   { href: "/stats", label: "Stats Export", icon: BarChart2 },
 ];
 
@@ -28,6 +16,9 @@ export default function Sidebar() {
     localStorage.removeItem("pipeline_token");
     router.replace("/login");
   }
+
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
 
   return (
     <aside className="w-60 flex-shrink-0 bg-slate-900 flex flex-col">
@@ -42,23 +33,20 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-0.5">
-        {navItems.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href;
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                active
-                  ? "bg-blue-600 text-white"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800"
-              }`}
-            >
-              <Icon className="w-4 h-4 flex-shrink-0" />
-              {label}
-            </Link>
-          );
-        })}
+        {navItems.map(({ href, label, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              isActive(href)
+                ? "bg-blue-600 text-white"
+                : "text-slate-400 hover:text-white hover:bg-slate-800"
+            }`}
+          >
+            <Icon className="w-4 h-4 flex-shrink-0" />
+            {label}
+          </Link>
+        ))}
       </nav>
 
       <div className="px-3 pb-4 space-y-0.5 border-t border-slate-800 pt-4">

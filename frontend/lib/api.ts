@@ -67,6 +67,8 @@ export const api = {
       body: JSON.stringify({ record_ids }),
     }),
 
+  getRecord: (id: string) => request<RecordDetail>(`/api/records/${id}`),
+
   getRecords: (params?: { modality?: string; status?: string; search?: string }) => {
     const qs = new URLSearchParams(
       Object.fromEntries(Object.entries(params || {}).filter(([, v]) => v))
@@ -74,6 +76,32 @@ export const api = {
     return request<{ records: HistoryRecord[]; total: number }>(
       `/api/records${qs ? `?${qs}` : ""}`
     )
+  },
+
+  exportToRedcap: (record_ids: string[]) =>
+    request<{ batch_id: string; imported: number; failed: number; results: Array<{ record_id: string; status: string; message: string }> }>("/api/import", {
+      method: "POST",
+      body: JSON.stringify({ record_ids }),
+    }),
+
+  downloadCsv: async (record_ids?: string[]) => {
+    const token = getToken()
+    const res = await fetch(`${API_URL}/api/export/csv`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ record_ids: record_ids ?? null }),
+    })
+    if (!res.ok) throw new Error("CSV export failed")
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "redcap_export.csv"
+    a.click()
+    URL.revokeObjectURL(url)
   },
 
   exportStats: (body: { modality?: string; date_from?: string; date_to?: string; format: string }) =>
@@ -90,6 +118,19 @@ export const api = {
       method: "PUT",
       body: JSON.stringify(settings),
     }),
+}
+
+export interface RecordDetail {
+  record_id: string
+  filename: string
+  modality: string
+  status: string
+  extracted: Record<string, string>
+  warnings: string[]
+  errors: string[]
+  redcap_id: string | null
+  imported_at: string | null
+  created_at: string | null
 }
 
 export interface ReviewRecord {

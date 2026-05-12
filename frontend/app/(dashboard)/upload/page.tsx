@@ -18,11 +18,14 @@ export default function UploadPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<{ uploaded: number } | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   function addFiles(incoming: FileList | null) {
     if (!incoming) return;
-    const pdfs = Array.from(incoming).filter((f) => f.type === "application/pdf");
+    const pdfs = Array.from(incoming).filter(
+      (f) => f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf")
+    );
     setFiles((prev) => [...prev, ...pdfs.map((f) => ({ file: f, status: "ready" as const }))]);
   }
 
@@ -40,12 +43,14 @@ export default function UploadPage() {
     if (!files.length) return;
     setUploading(true);
     setResult(null);
+    setUploadError(null);
     try {
       const res = await api.upload(files.map((f) => f.file), modality);
       setFiles((prev) => prev.map((f) => ({ ...f, status: "done" as const })));
       setResult({ uploaded: res.uploaded });
-    } catch {
+    } catch (err) {
       setFiles((prev) => prev.map((f) => ({ ...f, status: "error" as const })));
+      setUploadError(err instanceof Error ? err.message : "Upload failed — check console for details");
     } finally {
       setUploading(false);
     }
@@ -134,6 +139,13 @@ export default function UploadPage() {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {uploadError && (
+        <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-6">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          {uploadError}
         </div>
       )}
 

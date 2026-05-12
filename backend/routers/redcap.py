@@ -25,8 +25,6 @@ async def import_to_redcap(body: ImportRequest, _: dict = Depends(get_current_us
         rec = store.get(rid)
         if not rec:
             raise HTTPException(status_code=404, detail=f"Record {rid} not found")
-        if rec.get("status") != "approved":
-            raise HTTPException(status_code=400, detail=f"Record {rid} is not approved")
         records_to_import.append(ImportRecord(
             record_id=rid,
             fields=rec.get("mapped_fields", rec.get("extracted", {})),
@@ -46,7 +44,7 @@ async def import_to_redcap(body: ImportRequest, _: dict = Depends(get_current_us
     now = datetime.now(timezone.utc).isoformat()
     for r in result.results:
         store.update(r.record_id, {
-            "status": "imported" if r.success else "import_failed",
+            "status": "exported" if r.success else "export_failed",
             "imported_at": now if r.success else None,
             "import_error": r.error,
         })
